@@ -1,10 +1,10 @@
 <template>
-  <AppHeader :isLoggedIn="isLoggedIn" @open-login-model="isLoginOpen = true" />
+  <AppHeader />
   <div class="w-full flex">
     <router-view></router-view>
   </div>
   <teleport to="body">
-    <LoginModel v-if="isLoginOpen" @close-login="isLoginOpen = false" />
+    <LoginModel />
   </teleport>
 </template>
 
@@ -14,22 +14,15 @@ import LoginModel from "./components/LoginModel.vue";
 import firebase from "./utilities/firebase.js";
 export default {
   components: { AppHeader, LoginModel },
-  data() {
-    return {
-      isLoginOpen: true,
-      isLoggedIn: true,
-      authUser: {},
-    };
-  },
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.isLoggedIn = true;
-        this.authUser = user;
+        this.$store.commit("setIsLoggedIn");
+        this.$store.commit("setAuthUser", user);
         console.log(user);
       } else {
-        this.isLoggedIn = false;
-        this.authUser = {};
+        this.$store.commit("setIsLoggedIn", false);
+        this.$store.commit("setAuthUser", {});
         console.log("No User");
       }
     });

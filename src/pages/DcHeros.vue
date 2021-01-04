@@ -4,7 +4,7 @@
     <ul class="border rounded p-2">
       <li
         class="flex justify-between"
-        v-for="(value, index) in dcheros"
+        v-for="(value, index) in dcHeros"
         v-bind:key="value.name"
       >
         {{ value.name }}
@@ -29,39 +29,46 @@
 </template>
 
 <script>
+import { onMounted, ref, computed } from "vue";
 export default {
-  methods: {
-    // 不在methods中使用arrow function，因为不保有指向该vue实例的this
-    // 但我们在method中需要用到vue实例中的data function里面的数据
-    addHero() {
-      this.dcheros.push({ name: this.newHero });
-      this.newHero = "";
-    },
-    remove(index) {
-      this.dcheros = this.dcheros.filter((heros, i) => i !== index);
-    },
+  setup() {
+    const newHeroRef = ref("");
+    const newHero = ref("");
+    const dcHeros = ref([
+      { name: "Supergirl" },
+      { name: "Batman" },
+      { name: "Flash" },
+      { name: "Arrow" },
+      { name: "Superman" },
+    ]);
+
+    onMounted(() => {
+      newHeroRef.value.focus();
+    });
+
+    const heroCount = computed({
+      get: () => {
+        return dcHeros.value.length;
+      },
+    });
+
+    function remove(index) {
+      dcHeros.value = dcHeros.value.filter((heros, i) => i !== index);
+    }
+
+    function addHero() {
+      dcHeros.value.unshift({ name: this.newHero });
+      newHero.value = "";
+    }
+
+    return { dcHeros, newHero, remove, heroCount, addHero, newHeroRef };
   },
-  computed: {
-    heroCount() {
-      return this.dcheros.length;
-    },
-  },
+
   data() {
     return {
       attribute: "value",
       isDisabled: false,
-      newHero: "",
-      dcheros: [
-        { name: "Supergirl" },
-        { name: "Batman" },
-        { name: "Flash" },
-        { name: "Arrow" },
-        { name: "Superman" },
-      ],
     };
-  },
-  mounted() {
-    this.$refs.newHeroRef.focus();
   },
 };
 </script>

@@ -6,9 +6,10 @@
         <textarea
           class="w-full h-full"
           :value="text"
-          @click="update"
+          @input="update"
           ref="markdownTextAreaRef"
         ></textarea>
+        <!-- 注意这里是at input而不是at click，否则会出现不同步的情况 -->
       </article>
       <article class="w-1/2 border bg-gray-300" v-html="markedText"></article>
     </section>
@@ -17,12 +18,13 @@
 
 <script>
 import marked from "marked";
-import debounce from "../utilities/mixins/debounce";
+import useDebounce from "../utilities/copmosition/useDebounce.js";
+
 export default {
-  mixins: [debounce],
   data() {
     return {
-      text: "",
+      text: "**this is a markdown app**",
+      debouce: "",
     };
   },
   computed: {
@@ -39,6 +41,8 @@ export default {
     },
   },
   mounted() {
+    const { debounce } = useDebounce();
+    this.debounce = debounce;
     this.$refs.markdownTextAreaRef.focus();
   },
 };
